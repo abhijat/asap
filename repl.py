@@ -18,29 +18,35 @@ class TaskHandler(cmd.Cmd):
             self.prompt = f'{new_prompt} '
 
     def do_push(self, data: str):
-        task_id = self.task_store.push_task(data)
-        print(f'added task id {task_id}')
+        print(f'added task id {self.push_task(data)}')
 
-    def do_pop(self, key: str):
-        task = self.task_store.pop_task(task_hash=key)
-        if task is not None:
-            print(f'removed task [{task}]')
+    def push_task(self, description: str):
+        return self.task_store.push_task(description=description)
+
+    def do_pop(self, task_hash: str):
+        deleted_task = self.pop_task(task_hash=task_hash)
+        if deleted_task is not None:
+            print(f'removed task [{deleted_task}]')
         else:
-            print(f'could not find key {key}')
+            print(f'could not find key {task_hash}')
+
+    def pop_task(self, task_hash: str):
+        return self.task_store.pop_task(task_hash=task_hash)
 
     def complete_pop(self, text: str, _line: str, _start_index: int, _end_index: int):
         text = text.strip()
         return [key for key in self.task_store.keys() if key.startswith(text)]
 
     def do_ls(self, _data: str):
-        self.list_tasks()
+        for task in self.list_tasks():
+            print(task)
 
     def do_list(self, _data: str):
-        self.list_tasks()
+        for task in self.list_tasks():
+            print(task)
 
     def list_tasks(self):
-        for task in self.task_store.list_tasks():
-            print(task)
+        return self.task_store.list_tasks()
 
     def do_EOF(self, _data):
         print('Good bye!')

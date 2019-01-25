@@ -15,7 +15,7 @@ class TaskHandlerTest(unittest.TestCase):
         self.task_hash = Task.calculate_task_hash(self.description)
 
     def test_can_add_tasks_from_repl(self):
-        self.task_handler.do_push(data=self.description)
+        self.task_handler.push_task(description=self.description)
 
         self.assertEqual(1, len(self.task_store.data))
 
@@ -23,14 +23,15 @@ class TaskHandlerTest(unittest.TestCase):
         self.assertEqual(self.description, task.description)
 
     def test_can_remove_added_task_from_repl(self):
-        self.task_handler.do_push(data=self.description)
+        self.task_handler.push_task(description=self.description)
 
         self.assertEqual(1, len(self.task_store.data))
 
-        self.task_handler.do_pop(self.task_hash)
+        self.task_handler.pop_task(task_hash=self.task_hash)
         self.assertEqual(0, len(self.task_store.data))
 
     def test_can_list_added_tasks_from_repl(self):
-        self.task_handler.do_push(data=self.description)
-        tasks = self.task_handler.list_tasks()
-        print(tasks)
+        self.task_handler.push_task(description=self.description)
+
+        task = self.task_handler.list_tasks()[0]
+        self.assertEqual(self.description, task.description)

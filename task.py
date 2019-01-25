@@ -6,6 +6,10 @@ import pytz
 from marshmallow import schema, fields
 
 
+def serialize_timestamp(timestamp: float, timezone: str = 'Asia/Kolkata') -> str:
+    return datetime.datetime.fromtimestamp(timestamp, tz=pytz.timezone(timezone)).strftime('%d %B %Y %H:%M:%S %z')
+
+
 class TaskSchema(schema.Schema):
 
     def __init__(self) -> None:
@@ -18,8 +22,7 @@ class TaskSchema(schema.Schema):
     created_at_display = fields.Method(method_name='timestamp_to_datetime')
 
     def timestamp_to_datetime(self, obj):
-        when = datetime.datetime.fromtimestamp(obj.created_at, tz=pytz.timezone('Asia/Kolkata'))
-        return when.strftime('%d %B %Y %H:%M:%S %z')
+        return serialize_timestamp(obj.created_at)
 
 
 class Task(object):

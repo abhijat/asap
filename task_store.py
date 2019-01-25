@@ -19,7 +19,7 @@ class TasksInMemory(object):
         return self.data.pop(task_hash, None)
 
     def list_tasks(self):
-        return self.data.values()
+        return list(self.data.values())
 
     def keys(self):
         return self.data.keys()
