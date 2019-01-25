@@ -3,7 +3,7 @@ import hashlib
 import time
 
 import pytz
-from marshmallow import schema, fields
+from marshmallow import schema, fields, post_load
 
 
 def serialize_timestamp(timestamp: float, timezone: str = 'Asia/Kolkata') -> str:
@@ -19,19 +19,24 @@ class TaskSchema(schema.Schema):
     completed = fields.Bool()
     created_at = fields.Float(load_only=True)
     task_hash = fields.Str()
-    created_at_display = fields.Method(method_name='timestamp_to_datetime')
+    created_at_display = fields.Method(method_name='timestamp_to_datetime', dump_only=True)
 
     def timestamp_to_datetime(self, obj):
         return serialize_timestamp(obj.created_at)
 
+    @post_load
+    def make_task(self, data):
+        return Task(**data)
+
 
 class Task(object):
-    def __init__(self, description: str, completed: bool = False) -> None:
+    def __init__(self, description: str, completed: bool = False, task_hash: str = None,
+                 created_at: float = None) -> None:
         super().__init__()
         self.description = description
         self.completed = completed
-        self.created_at = self._now()
-        self.task_hash = self.calculate_task_hash(self.description)
+        self.created_at = created_at if created_at else self._now()
+        self.task_hash = task_hash if task_hash else self.calculate_task_hash(self.description)
 
     @staticmethod
     def calculate_task_hash(description: str, hash_size: int = 6) -> str:
@@ -43,7 +48,7 @@ class Task(object):
 
     @staticmethod
     def load(data: dict) -> 'Task':
-        return TaskSchema().load(data)
+        return TaskSchema().load(data).data
 
     def as_dict(self) -> dict:
         return TaskSchema().dump(self).data

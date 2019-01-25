@@ -40,8 +40,8 @@ class TaskStore(object):
         with TinyDB(self.file_path) as db:
             task_to_delete = db.search(where('task_hash') == task_hash)
             if task_to_delete:
+                task_to_delete = task_to_delete[0]
                 db.remove(where('task_hash') == task_hash)
-
         return task_to_delete
 
     def list_tasks(self):
