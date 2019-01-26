@@ -1,11 +1,10 @@
 import cmd
-from typing import Union
 
-from task_store import TaskStore, TasksInMemory
+from task_store import TaskStore
 
 
 class TaskHandler(cmd.Cmd):
-    def __init__(self, task_store: Union[TasksInMemory, TaskStore], completekey='tab', stdin=None, stdout=None):
+    def __init__(self, task_store: TaskStore, completekey='tab', stdin=None, stdout=None):
         super().__init__(completekey, stdin, stdout)
         self.task_store = task_store
         self.prompt = '[[asap]] '

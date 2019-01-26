@@ -23,5 +23,8 @@ class SerializationTests(unittest.TestCase):
             'created_at': Task._now(),
         }
 
-        t = Task.load(data)
-        print(t)
+        task = Task.load(data)
+        self.assertEqual('foobar', task.description)
+        self.assertFalse(task.completed)
+        self.assertEqual(Task.calculate_task_hash('foobar'), task.task_hash)
+        self.assertFalse(hasattr(task, 'created_at_display'))
