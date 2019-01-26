@@ -54,9 +54,6 @@ class Task(object):
         return TaskSchema().dump(self).data
 
     def __repr__(self) -> str:
-        return '{} ({})\n    [{}] {}'.format(
-            serialize_timestamp(self.created_at),
-            self.task_hash,
-            'x' if self.completed else ' ',
-            self.description,
-        )
+        created_at = serialize_timestamp(self.created_at)
+        completed_flag = 'x' if self.completed else ' '
+        return f'{created_at} ({self.task_hash})\n  [{completed_flag}] {self.description}'
