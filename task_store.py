@@ -44,6 +44,13 @@ class TaskStore(object):
         with self._get_db_handle() as db:
             return [doc.get('task_hash') for doc in iter(db)]
 
+    def finish_task(self, task_hash: str) -> Optional[Task]:
+        with self._get_db_handle() as db:
+            updated_ids = db.update({'completed': True}, where('task_hash') == task_hash)
+            if updated_ids:
+                return Task.load(db.get(doc_id=updated_ids[0]))
+        return None
+
     def __len__(self):
         with self._get_db_handle() as db:
             return len(db)
